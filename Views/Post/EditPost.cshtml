@@ -1,0 +1,169 @@
+@model WebNhaTro.Models.PostViewModel
+
+@{
+    ViewData["Title"] = "Chỉnh sửa bài đăng";
+}
+
+
+<form asp-action="NewPost" method="post" enctype="multipart/form-data">
+    @Html.AntiForgeryToken()
+    <div class="d-flex justify-content-center align-items-center">
+        <div class="col-md-12 col-lg-8">
+            <h2>Đăng tin cho thuê</h2>
+            <div class="card shadow-sm px-4 py-4 mb-3">
+                <div class="form-group">
+                    <label for="roomtype">Loại nhà <span class="text-danger">(*)</span></label>
+                    <select id="roomtype" class="form-control" required>
+                        <option value="@Model.RoomType">@Model.RoomType</option>
+                        <option>Phòng trọ</option>
+                        <option>Nhà nguyên căn</option>
+                        <option>Chung cư mini</option>
+                    </select>
+                </div>
+            </div>
+                
+            <div class="card shadow-sm px-4 py-4 mb-3">
+                <div class="form-group">
+                    <label for="province">Tỉnh/Thành phố <span class="text-danger">(*)</span></label>
+                    <select id="province" class="form-control" required>
+                        <option value="@ViewBag.Province">@ViewBag.Province</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="district">Quận/Huyện <span class="text-danger">(*)</span></label>
+                    <select id="district" class="form-control" required>
+                        <option value="@ViewBag.District">@ViewBag.District</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="ward">Phường/Xã <span class="text-danger">(*)</span></label>
+                    <select id="ward" class="form-control" required>
+                        <option value="@ViewBag.Ward">@ViewBag.Ward</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Địa chỉ <span class="text-danger">(*)</span></label>
+                    <input type="text" id="address" name="address" class="form-control" value="@ViewBag.Detail" required/>
+                </div>
+            </div>
+                
+            <div class="card shadow-sm px-4 py-4 mb-3">
+                <div class="form-group">
+                    <label>Tiêu đề <span class="text-danger">(*)</span></label>
+                    <input type="text" id="title" class="form-control" value="@Model.Title" required />
+                </div>
+
+                <div class="form-group">
+                    <label>Nội dung mô tả <span class="text-danger">(*)</span></label>
+                    <textarea id="description" class="form-control" rows="5" required>@Model.Description</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Giá cho thuê <span class="text-danger">(*)</span></label>
+                    <input id="price" class="form-control" type="number" value="@Model.Price" required min="1"/>
+                </div>
+
+                <div class="form-group">
+                    <label>Diện tích (m²) <span class="text-danger">(*)</span></label>
+                    <input id="area" class="form-control" type="number" value="@Model.Area" required min="1"/>
+                </div>
+
+                <div class="form-group">
+                    <label>Đặc điểm nổi bật</label>
+                    <input id="amenities" class="form-control" type="text" value="@Model.Amenities" />
+                </div>
+            </div>
+
+            <div class="card shadow-sm px-4 py-3 mb-4">
+                <div class="form-group">
+                    <label>Hình ảnh</label>
+                    <input type="file" id="imageInput" name="images[]" class="form-control" multiple accept="image/*"/>
+                    <span class="text-danger"><strong>Lưu ý: </strong>Chọn ảnh mới sẽ xóa toàn bộ ảnh cũ.</span>
+                    <ul id="fileList" class="mt-2">
+                        @if (Model.ImageUrls != null && Model.ImageUrls.Any())
+                        {
+                            foreach (var url in Model.ImageUrls)
+                            {
+                                <li data-existing="true" data-url="@url">
+                                    <a href="@url" target="_blank">@System.IO.Path.GetFileName(url)</a>
+                                    <input type="hidden" name="ExistingImages[]" value="@url" />
+                                </li>
+                            }
+                        }
+                    </ul>
+                </div>
+            </div>
+
+            <button type="submit" id="submit-editpost" class="btn btn-primary w-100">Cập nhật</button>
+        </div>
+    </div>
+</form>
+
+<script src="/lib/jquery/dist/jquery.min.js"></script> 
+<script src="/js/dashboard.js"></script> 
+<script>
+    $(document).ready(function () {
+        $("#submit-editpost").click(function (e) {
+            e.preventDefault(); // Ngăn form submit truyền thống
+            
+            let form = $("form")[0];
+
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+            const postId = '@Model.PostID';
+            const province = $('#province').val();
+            const district = $('#district').val();
+            const ward = $('#ward').val();
+            const detailAddress = $('#address').val();
+            const fullAddress = `${detailAddress}, ${ward}, ${district}, ${province}`;
+
+            const price = parseFloat($('#price').val());
+            const area = parseFloat($('#area').val());
+
+            if (price <= 0) {
+                alert('Giá không hợp lệ!');
+                return;
+            }
+            if (area <= 0) {
+                alert('Diện tích không hợp lệ!');
+                return;
+            }
+            let formData = new FormData();
+            formData.append("PostID", postId);
+            formData.append("Title", $('#title').val());
+            formData.append("Price", price);
+            formData.append("Area", area);
+            formData.append("Address", fullAddress);
+            formData.append("Description", $('#description').val());
+            formData.append("RoomType", $('#roomtype').val());
+            formData.append("Amenities", $('#amenities').val());
+
+            const files = $('#imageInput')[0].files;
+            for (let i = 0; i < files.length; i++) {
+                formData.append("Images", files[i]);
+            }
+
+            $.ajax({
+                url: '/Post/UpdatePost',
+                type: 'POST',
+                contentType: false,
+                processData: false,
+                data: formData,
+                success: function (response) {
+                    alert('Cập nhật thành công!');
+                    window.location.href = '/Manage/ListPost';
+                },
+                error: function (xhr, status, error) {
+                    console.error('Lỗi:', error);
+                    alert('Cập nhật thất bại!');
+                }
+            });
+        });
+    });
+
+</script>

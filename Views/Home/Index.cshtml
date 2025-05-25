@@ -1,0 +1,224 @@
+﻿@model PaginatedList<PostViewModel>
+
+@{
+    ViewData["Title"] = "Trang chủ";
+}
+
+<div class="col-md-8 d-flex flex-row justify-content-between align-items-center">
+    <h2 class="mb-4">Danh sách phòng trọ</h2>
+    <button class="btn btn-secondary" type="button" id="toggleFilter">Bộ lọc</button>
+</div>
+
+<div class="mb-4">
+    <form method="get" id="filterForm" style="display: none;">
+        <div class="row g-3">
+            <div class="card shadow-sm col-md-10 px-3 py-3">
+                <div class="row">
+                    <div class="col-md-4">
+                        <label for="province" class="form-label">Tỉnh/Thành phố</label>
+                        <select id="province" name="province" class="form-select">
+                            <option value="">Chọn tỉnh/thành phố</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="district" class="form-label">Quận/Huyện</label>
+                        <select id="district" name="district" class="form-select" disabled>
+                            <option value="">Chọn quận/huyện</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="ward" class="form-label">Phường/Xã</label>
+                        <select id="ward" name="ward" class="form-select" disabled>
+                            <option value="">Chọn phường/xã</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-2">
+                        <label for="minPrice" class="form-label">Giá tối thiểu</label>
+                        <input type="number" id="minPrice" name="minPrice" class="form-control" value="@Context.Request.Query["minPrice"]" placeholder="0">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="maxPrice" class="form-label">Giá tối đa</label>
+                        <input type="number" id="maxPrice" name="maxPrice" class="form-control" value="@Context.Request.Query["maxPrice"]" placeholder="0">
+                    </div>
+                    <div class="col-md-2">
+                        <label for="minArea" class="form-label">Diện tích tối thiểu</label>
+                        <input type="number" id="minArea" name="minArea" class="form-control" value="@Context.Request.Query["minArea"]" placeholder="0">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="maxArea" class="form-label">Diện tích tối đa</label>
+                        <input type="number" id="maxArea" name="maxArea" class="form-control" value="@Context.Request.Query["maxArea"]" placeholder="0">
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-100">Tìm kiếm</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="row">
+    @if (Model != null && Model.Any())
+    {
+        foreach (var post in Model)
+        {
+            <div class="col-md-8 mb-4">
+                <div class="card shadow-sm">
+                    <div class="row g-0" style="height: 300px;">
+                        <div class="col-8 h-100">
+                            <img src="@(post.ImageUrls.ElementAtOrDefault(0) ?? "/images/no-image.jpg")" 
+                                class="img-fluid h-100 w-100" 
+                                style="object-fit: cover;" 
+                                alt="Ảnh lớn">
+                        </div>
+                        <div class="col-4 d-flex flex-column h-100">
+                            <img src="@(post.ImageUrls.ElementAtOrDefault(1) ?? "/images/no-image.jpg")" 
+                                class="img-fluid" 
+                                style="height: 50%; object-fit: cover;">
+                            <img src="@(post.ImageUrls.ElementAtOrDefault(2) ?? "/images/no-image.jpg")" 
+                                class="img-fluid" 
+                                style="height: 50%; object-fit: cover;">
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">@post.Title</h5>
+                        <span class="fw-bolder fs-6">@string.Format("{0:N0}", post.Price) đồng/tháng</span>
+                        <span class="mx-2">-</span>
+                        <span>@string.Format("{0:N0}", post.Area) m²</span>
+                        <span class="mx-2">-</span>
+                        <span>@post.Address</span>
+                        <p class="mb-3 text-secondary fw-light clamp-2-lines">@post.Description</p>
+                        <a href="@Url.Action("Detail", "Post", new { id = post.PostID })" class="btn btn-primary btn-sm">Xem chi tiết</a>
+                        <button class="btn btn-outline-danger favorite-btn"
+                                data-post-id="@post.PostID">
+                            <i class="bi @(post.IsFavorited ? "bi-heart-fill" : "bi-heart")"></i>
+                            @(post.IsFavorited ? "Bỏ lưu" : "Lưu")
+                        </button>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="col-12 text-center">
+            <p>Không tìm thấy bài đăng nào phù hợp.</p>
+        </div>
+    }
+</div>
+
+<nav aria-label="Page navigation" class="mt-4">
+    <ul class="pagination justify-content-center">
+        @if (Model.HasPreviousPage)
+        {
+            <li class="page-item">
+                <a class="page-link" href="?page=@(Model.PageIndex - 1)">Trang trước</a>
+            </li>
+        }
+        else
+        {
+            <li class="page-item disabled">
+                <span class="page-link">Trang trước</span>
+            </li>
+        }
+
+        @for (int i = 1; i <= Model.TotalPages; i++)
+        {
+            if (i == Model.PageIndex)
+            {
+                <li class="page-item active"><span class="page-link">@i</span></li>
+            }
+            else
+            {
+                <li class="page-item"><a class="page-link" href="?page=@i">@i</a></li>
+            }
+        }
+
+        @if (Model.HasNextPage)
+        {
+            <li class="page-item">
+                <a class="page-link" href="?page=@(Model.PageIndex + 1)">Trang sau</a>
+            </li>
+        }
+        else
+        {
+            <li class="page-item disabled">
+                <span class="page-link">Trang sau</span>
+            </li>
+        }
+    </ul>
+</nav>
+
+<script src="/lib/jquery/dist/jquery.min.js"></script> 
+<script src="/js/favorite.js"></script>
+@section Scripts {
+    <script>
+        document.getElementById('toggleFilter').addEventListener('click', function () {
+            const filterForm = document.getElementById('filterForm');
+            if (filterForm.style.display === 'none') {
+                filterForm.style.display = 'block';
+            } else {
+                filterForm.style.display = 'none';
+            }
+        });
+
+        // Load provinces, districts, and wards from JSON
+        fetch('/provinces/vietnam-provinces.json')
+            .then(response => response.json())
+            .then(data => {
+                const provinceSelect = document.getElementById('province');
+                const districtSelect = document.getElementById('district');
+                const wardSelect = document.getElementById('ward');
+
+                // Populate provinces
+                data.forEach(province => {
+                    const option = document.createElement('option');
+                    option.value = province.name;
+                    option.textContent = province.name;
+                    provinceSelect.appendChild(option);
+                });
+
+                // Handle province change
+                provinceSelect.addEventListener('change', function () {
+                    districtSelect.innerHTML = '<option value="">Chọn quận/huyện</option>';
+                    wardSelect.innerHTML = '<option value="">Chọn phường/xã</option>';
+                    wardSelect.disabled = true;
+
+                    const selectedProvince = data.find(p => p.name === this.value);
+                    if (selectedProvince) {
+                        districtSelect.disabled = false;
+                        selectedProvince.districts.forEach(district => {
+                            const option = document.createElement('option');
+                            option.value = district.name;
+                            option.textContent = district.name;
+                            districtSelect.appendChild(option);
+                        });
+                    } else {
+                        districtSelect.disabled = true;
+                    }
+                });
+
+                // Handle district change
+                districtSelect.addEventListener('change', function () {
+                    wardSelect.innerHTML = '<option value="">Chọn phường/xã</option>';
+
+                    const selectedProvince = data.find(p => p.name === provinceSelect.value);
+                    const selectedDistrict = selectedProvince?.districts.find(d => d.name === this.value);
+                    if (selectedDistrict) {
+                        wardSelect.disabled = false;
+                        selectedDistrict.wards.forEach(ward => {
+                            const option = document.createElement('option');
+                            option.value = ward.name;
+                            option.textContent = ward.name;
+                            wardSelect.appendChild(option);
+                        });
+                    } else {
+                        wardSelect.disabled = true;
+                    }
+                });
+            })
+            .catch(error => console.error('Error loading provinces:', error));
+    </script>
+}

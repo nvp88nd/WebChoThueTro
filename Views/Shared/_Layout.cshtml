@@ -1,0 +1,142 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Phòng Trọ Sinh viên</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/home.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/WebNhaTro.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/footer.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">WebNhaTro</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Trang chủ</a>
+                        </li>
+                        <li class="nav-item">
+                            @if(Context.Session.GetInt32("UserID") != null)
+                            {
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Favorite">Tin đã lưu</a>
+                            }
+                        </li>
+                    </ul>
+
+                    <div class="dropdown">
+                        <button class="nav-link text-dark dropdown-toggle me-4 btn-dropdown" type="button" id="accountDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            👤 
+                            @if(@Context.Session.GetString("UserName") != null)
+                            {
+                                @Context.Session.GetString("UserName")
+                            }
+                            else
+                            {
+                                <span> Tài khoản</span>
+                            }
+                        </button>
+                        @if (Context.Session.GetInt32("UserID") != null)
+                        {
+                            <ul class="dropdown-menu" aria-labelledby="accountDropdown">
+                                <li><a class="dropdown-item" href="/Account/Profile">Hồ sơ</a></li>
+
+                                @if (Context.Session.GetString("Role") == "Admin" || Context.Session.GetString("Role") == "ChuTro")
+                                {
+                                    <li><a class="dropdown-item" href="/Manage/ListPost">Quản lý bài đăng</a></li>
+                                }
+
+                                @if (Context.Session.GetString("Role") == "Admin")
+                                {
+                                    <li><a class="dropdown-item" href="/Manage/ListUsers">Quản lý tài khoản</a></li>
+                                }
+
+                                <li><a class="dropdown-item" href="/Account/ChangePassword">Đổi mật khẩu</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-danger" href="/Account/Logout">Đăng xuất</a></li>
+                            </ul>   
+                        }
+                        else
+                        {
+                            <ul class="dropdown-menu" aria-labelledby="accountDropdown">
+                                <li><a class="dropdown-item" href="/Account/Login">Đăng nhập</a></li>
+                                <li><a class="dropdown-item" href="/Account/Register">Đăng ký</a></li>
+                            </ul>
+                        }
+                    </div>
+                    <div>
+                        @if(Context.Session.GetString("Role") == "ChuTro" || Context.Session.GetString("Role") == "Admin")
+                        {
+                            <a class="btn btn-primary me-4" href="/Manage/NewPost">Đăng tin</a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container mt-4 content">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted bg-white">
+        <div class="container">
+            <div class="row">
+                <!-- Cột 1: Về WebNhaTro -->
+                <div class="col-md-3 col-sm-6 mb-3">
+                    <h5>Về WebNhaTro</h5>
+                    <ul>
+                        <li><a asp-controller="Home" asp-action="About">Giới thiệu</a></li>
+                        <li><a href="#">Quy chế hoạt động</a></li>
+                        <li><a href="#">Quy định sử dụng</a></li>
+                        <li><a href="#">Chính sách bảo mật</a></li>
+                    </ul>
+                </div>
+                <!-- Cột 2: Dành cho khách hàng -->
+                <div class="col-md-3 col-sm-6 mb-3">
+                    <h5>Dành cho khách hàng</h5>
+                    <ul>
+                        <li><a href="#">Câu hỏi thường gặp</a></li>
+                        <li><a href="#">Hướng dẫn đăng tin</a></li>
+                        <li><a href="#">Quy định đăng tin</a></li>
+                        <li><a href="#">Giải quyết khiếu nại</a></li>
+                    </ul>
+                </div>
+                <!-- Cột 3: Liên hệ WebNhaTro -->
+                <div class="col-md-3 col-sm-6 mb-3">
+                    <h5>Liên hệ WebNhaTro</h5>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <!-- Nếu không có icon Zalo chính thức, có thể dùng icon Messenger hoặc thay thế bằng hình ảnh -->
+                        <a href="#"><i class="fab fa-facebook-messenger"></i></a>
+                        <a href="#"><i class="fab fa-tiktok"></i></a>
+                    </div>
+                </div>
+                <!-- Cột 4: Địa chỉ -->
+                <div class="col-md-3 col-sm-6 mb-3">
+                    <h5>Địa chỉ</h5>
+                    <p>123 Đường ABC, Quận XYZ, TP.HCM</p>
+                    <p>Hotline: 0123 456 789</p>
+                    <p>Email: contact@webnhatro.com</p>
+                </div>
+            </div>
+            <div class="text-center mt-00">
+                &copy; 2025 - WebNhaTro - <a asp-controller="Home" asp-action="Privacy">Privacy</a>
+            </div>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

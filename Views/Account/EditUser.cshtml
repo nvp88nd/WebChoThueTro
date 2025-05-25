@@ -1,0 +1,103 @@
+@model WebNhaTro.Models.UserViewModel2
+
+@{
+    ViewData["Title"] = "Chỉnh sửa thông tin người dùng";
+}
+
+<div class="d-flex justify-content-center align-items-center">
+    <div class="card p-4" style="width: 500px;">
+        <h2 class="text-center">Đăng ký</h2>
+        <form method="post" asp-action="Register">
+            @Html.AntiForgeryToken()
+            <div class="mb-3">
+                <label for="username" class="form-label">Họ và tên</label>
+                <input type="text" id="username" name="FullName" class="form-control border-orange" value="@Model.FullName" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="phone" class="form-label">Số điện thoại</label>
+                <input type="tel" id="phone" name="Phone" pattern="[0-9]{10,11}" class="form-control border-orange" value="@Model.Phone" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" id="email" name="Email" class="form-control border-orange" value="@Model.Email" required>
+            </div>
+
+            <div class="mb-3 d-flex justify-content-start">
+                <label class="form-label fw-medium m-0">Loại tài khoản</label>
+                <div class="form-check ms-3">
+                    <input type="radio" id="user_type_guest" name="user_type" value="NguoiThue" class="form-check-input">
+                    <label for="user_type_guest" class="form-check-label">Tìm kiếm</label>
+                </div>
+                <div class="form-check ms-3">
+                    <input type="radio" id="user_type_owner" name="user_type" value="ChuTro" class="form-check-input">
+                    <label for="user_type_owner" class="form-check-label">Chủ nhà</label>
+                </div>
+                <div class="form-check ms-3">
+                    <input type="radio" id="user_type_admin" name="user_type" value="Admin" class="form-check-input">
+                    <label for="user_type_admin" class="form-check-label">Admin</label>
+                </div>
+            </div>
+            <span id="wrong" class="text-danger"></span>
+
+            <button type="submit" id="submit-update-user"class="btn btn-primary w-100">Cập nhật</button>
+        </form>
+    </div>
+</div>
+
+
+<script src="/lib/jquery/dist/jquery.min.js"></script> 
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        const defaultType = '@Model.Role';
+        const inputToCheck = document.querySelector(`input[name="user_type"][value="${defaultType}"]`);
+        if (inputToCheck) {
+            inputToCheck.checked = true;
+        }
+    });
+
+    $(document).ready(function () {
+        $('#submit-update-user').click(function (e) {
+            e.preventDefault(); 
+
+            let form = $("form")[0];
+
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            const data = {
+                UserID: '@Model.UserID',
+                FullName: $('#username').val(),
+                Phone: $('#phone').val(),
+                Email: $('#email').val(),
+                Role: $('input[name="user_type"]:checked').val()
+            };
+            let csrfToken = $("input[name='__RequestVerificationToken']").val();
+
+            $.ajax({
+                url: '/Account/UpdateUser2',
+                type: 'POST',
+                data: JSON.stringify(data),
+                contentType: 'application/json',
+                headers: { "RequestVerificationToken": csrfToken },
+                success: function (response) {
+                    if (response.success) {
+                        alert('Cập nhật thông tin thành công!');
+                        window.location.href = '/Manage/ListUsers'; 
+                    }
+                    else {
+                        $('#wrong').text(response.message);
+                    }
+                },
+                error: function (xhr, error) {
+                    $('#wrong').text('Đã có lỗi xảy ra, vui lòng thử lại.');
+                    console.log(xhr.responseText);
+                    console.error(error);
+                }
+            });
+        });
+    });
+</script>

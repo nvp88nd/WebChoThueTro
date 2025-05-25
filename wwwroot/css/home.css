@@ -1,0 +1,23 @@
+.clamp-2-lines {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.btn-next-pre-carousel {
+    background-color: #686868a1; 
+    width: 40px; 
+    height: 40px; 
+    position: absolute; 
+    top: 50%; transform: 
+    translateY(-50%); 
+}
+
+.btn {
+    opacity: 1;
+}
+.btn:hover {
+    opacity: 1;
+}

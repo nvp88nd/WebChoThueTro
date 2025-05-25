@@ -1,0 +1,52 @@
+@model IEnumerable<WebNhaTro.Models.User>
+
+@{
+    ViewData["Title"] = "Quản lý tài khoản người dùng";
+}
+
+<div class="container mt-5">
+    <h2 class="mb-4">Danh sách tài khoản người dùng</h2>
+    <div class="card shadow-sm px-1 py-1 mb-3">
+        <div class="table-responsive"> <!-- Thêm lớp bao bọc -->
+            <table class="table table-bordered table-hover">
+                <thead class="table-primary">
+                    <tr>
+                        <th>#</th>
+                        <th>Họ và tên</th>
+                        <th>Số điện thoại</th>
+                        <th>Email</th>
+                        <th>Vai trò</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Any())
+                    {
+                        int index = 1;
+                        foreach (var user in Model)
+                        {
+                            <tr>
+                                <td>@index</td>
+                                <td>@user.FullName</td>
+                                <td>@user.Phone</td>
+                                <td>@user.Email</td>
+                                <td>@user.Role</td>
+                                <td>
+                                    <a href="@Url.Action("EditUser", "Account", new { id = user.UserID })" class="btn btn-sm btn-primary">Chỉnh sửa</a>
+                                    <a href="@Url.Action("DeleteUser", "Account", new { id = user.UserID })" class="btn btn-sm btn-danger" onclick="return confirm('Bạn có chắc chắn muốn xóa tài khoản này?');">Xóa</a>
+                                </td>
+                            </tr>
+                            index++;
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center">Không có tài khoản nào.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

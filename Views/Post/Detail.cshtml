@@ -1,0 +1,82 @@
+@model WebNhaTro.Models.Post
+
+@{
+    ViewData["Title"] = "Chi tiết phòng trọ";
+}
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card shadow-sm mb-3">
+                <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel" style="height: 400px; overflow: hidden; background-color: #f8f9fa;">
+                    <div class="carousel-inner h-100">
+                        @if (Model.PostImages != null && Model.PostImages.Any())
+                        {
+                            foreach (var image in Model.PostImages)
+                            {
+                                <div class="carousel-item @(image == Model.PostImages.First() ? "active" : "") h-100">
+                                    <img src="@image.ImageUrl" class="d-block w-100 h-100" style="object-fit: contain; background-color: #212529;" alt="Hình ảnh phòng trọ">
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="carousel-item active h-100">
+                                <img src="/images/no-image.jpg" class="d-block w-100 h-100" style="object-fit: contain; background-color: #212529;" alt="Hình ảnh phòng trọ">
+                            </div>
+                        }
+                    </div>
+                    <a class="carousel-control-prev btn btn-next-pre-carousel" href="#carouselExampleControls" role="button" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true" style="width: 15px; height: 15px;"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </a>
+                    <a class="carousel-control-next btn btn-next-pre-carousel" href="#carouselExampleControls" role="button" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true" style="width: 15px; height: 15px;"></span>
+                        <span class="visually-hidden">Next</span>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="card shadow-sm px-4 py-4 mb-3">
+                <h2>@Model.Title</h2>
+                <p><strong>Địa chỉ:</strong> @Model.Address</p>
+
+                <div class="d-flex mb-3">
+                    <span class="fw-bolder fs-6">@string.Format("{0:N0}", Model.Price) đồng/tháng</span>
+                    <span class="mx-2">-</span>
+                    <span>@string.Format("{0:N0}", Model.Area) m²</span>
+                    <span class="mx-2">-</span>
+                    <span>Cập nhật: @Model.UpdatedDate.ToString("dd/MM/yyyy")</span>
+                </div>
+
+                <h5>Thông tin mô tả</h5>
+                <p>@Html.Raw(Model.Description?.Replace(Environment.NewLine, "<br />"))</p>
+
+                @if (!string.IsNullOrEmpty(Model.Amenities))
+                {
+                    <h5>Tiện ích</h5>
+                    <p>@Model.Amenities</p>
+                }
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm px-4 py-4 mb-3">
+                <h4>Thông tin người đăng</h4>
+                @if (Model.Owner != null)
+                {
+                    <p><strong>Tên:</strong> @Model.Owner.FullName</p>
+                    <p><strong>Số điện thoại:</strong> @Model.Owner.Phone</p>
+                }
+                else
+                {
+                    <p>Thông tin người đăng không có sẵn.</p>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="">
+        <a href="@Url.Action("Index", "Home")" class="btn btn-secondary">Quay lại trang chủ</a>
+    </div>
+</div>

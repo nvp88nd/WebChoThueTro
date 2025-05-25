@@ -1,0 +1,91 @@
+@{
+    ViewData["Title"] = "Đăng tin cho thuê";
+}
+
+
+<form asp-action="NewPost" method="post" enctype="multipart/form-data">
+    <div class="d-flex justify-content-center align-items-center">
+        <div class="col-md-12 col-lg-8">
+            <h2>Đăng tin cho thuê</h2>
+            <div class="card shadow-sm px-4 py-4 mb-3">
+                <div class="form-group">
+                    <label for="roomtype">Loại nhà <span class="text-danger">(*)</span></label>
+                    <select id="roomtype" class="form-control" required>
+                        <option value="">-- Chọn loại nhà --</option>
+                        <option>Phòng trọ</option>
+                        <option>Nhà nguyên căn</option>
+                        <option>Chung cư mini</option>
+                    </select>
+                </div>
+            </div>
+                
+            <div class="card shadow-sm px-4 py-4 mb-3">
+                <div class="form-group">
+                    <label for="province">Tỉnh/Thành phố <span class="text-danger">(*)</span></label>
+                    <select id="province" class="form-control" required>
+                        <option value="">-- Chọn Tỉnh/Thành phố --</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="district">Quận/Huyện <span class="text-danger">(*)</span></label>
+                    <select id="district" class="form-control" disabled required>
+                        <option value="">-- Chọn Quận/Huyện --</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="ward">Phường/Xã <span class="text-danger">(*)</span></label>
+                    <select id="ward" class="form-control" disabled required>
+                        <option value="">-- Chọn Phường/Xã --</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Địa chỉ <span class="text-danger">(*)</span></label>
+                    <input type="text" id="address" name="address" class="form-control" disabled required/>
+                </div>
+            </div>
+                
+            <div class="card shadow-sm px-4 py-4 mb-3">
+                <div class="form-group">
+                    <label>Tiêu đề <span class="text-danger">(*)</span></label>
+                    <input type="text" id="title" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label>Nội dung mô tả <span class="text-danger">(*)</span></label>
+                    <textarea id="description" class="form-control" rows="5" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Giá cho thuê <span class="text-danger">(*)</span></label>
+                    <input id="price" class="form-control" type="number" required min="1"/>
+                </div>
+
+                <div class="form-group">
+                    <label>Diện tích (m²) <span class="text-danger">(*)</span></label>
+                    <input id="area" class="form-control" type="number" required min="1"/>
+                </div>
+
+                <div class="form-group">
+                    <label>Đặc điểm nổi bật</label>
+                    <input id="amenities" class="form-control" type="text" />
+                </div>
+            </div>
+
+            <div class="card shadow-sm px-4 py-3 mb-4">
+                <div class="form-group">
+                    <label>Hình ảnh</label>
+                    <input type="file" id="imageInput" name="images[]" class="form-control" multiple accept="image/*" />
+                    <ul id="fileList" class="mt-2"></ul>
+                </div>
+            </div>
+
+            <button type="submit" id="submit-newpost" class="btn btn-primary w-100">Đăng bài</button>
+        </div>
+    </div>
+</form>
+
+<script src="/lib/jquery/dist/jquery.min.js"></script> 
+<script src="/js/dashboard.js"></script> 

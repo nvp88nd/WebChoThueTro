@@ -1,0 +1,50 @@
+@model WebNhaTro.Models.User
+
+@{
+    ViewBag.Title = "Hồ sơ";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white text-center">
+                    <h3 class="mb-0">Hồ sơ cá nhân</h3>
+                </div>
+                <div class="card-body">
+                    @if (ViewBag.SuccessMessage != null)
+                    {
+                        <div class="alert alert-success text-center">
+                            @ViewBag.SuccessMessage
+                        </div>
+                    }
+                    <form method="post" asp-action="Profile">
+                        @Html.AntiForgeryToken()
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Họ và tên</label>
+                            <input type="text" id="username" name="FullName" class="form-control border-orange" required value="@Model.FullName" disabled>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">Số điện thoại</label>
+                            <input type="tel" id="phone" name="Phone" pattern="[0-9]{10,11}" class="form-control border-orange" required value="@Model.Phone" disabled>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" id="email" name="Email" class="form-control border-orange" required value="@Model.Email" disabled>
+                        </div>
+                        <span id="wrong" class="text-danger"></span>
+
+                        <button type="submit" id="edit-profile" class="btn btn-primary w-100">Chỉnh sửa hồ sơ</button>
+                        <button type="submit" id="submit-profile" class="btn btn-primary w-100" style="display: none;">Lưu hồ sơ</button>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/lib/jquery/dist/jquery.min.js"></script> 
+<script src="/js/profile.js"></script> 

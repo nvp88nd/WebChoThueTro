@@ -1,0 +1,83 @@
+@model IEnumerable<WebNhaTro.Models.Post>
+
+@{
+    ViewData["Title"] = "Danh sách bài đăng";
+    var role = Context.Session.GetString("Role") ?? string.Empty;
+    var userId = Context.Session.GetInt32("UserID");
+}
+
+<div class="container mt-5">
+    <h2 class="mb-4">Danh sách bài đăng</h2>
+    <div class="card shadow-sm px-3 py-3">
+        <div class="table-responsive"> <!-- Thêm lớp bao bọc -->
+            <table class="table table-bordered table-hover">
+                <thead class="table-primary">
+                    <tr>
+                        <th>#</th>
+                        <th>Tiêu đề</th>
+                        <th>Giá</th>
+                        <th>Diện tích</th>
+                        <th>Địa chỉ</th>
+                        <th>Trạng thái</th>
+                        <th>Ngày tạo</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Any())
+                    {
+                        int index = 1;
+                        foreach (var post in Model)
+                        {
+                            <tr>
+                                <td>@index</td>
+                                <td>@post.Title</td>
+                                <td>@string.Format("{0:N0}", post.Price) đồng</td>
+                                <td>@post.Area m²</td>
+                                <td>@post.Address</td>
+                                <td>@post.Status</td>
+                                <td>@post.CreatedDate.ToString("dd/MM/yyyy")</td>
+                                <td>
+                                    <a href="@Url.Action("Detail", "Post", new { id = post.PostID })" class="btn btn-sm btn-info">Xem</a>
+                                    @if (role == "Admin")
+                                    {
+                                        @if (post.Status == "Chờ duyệt")
+                                        {
+                                            <a href="@Url.Action("Approve", "Manage", new { id = post.PostID })" 
+                                               class="btn btn-sm btn-success" 
+                                               onclick="return confirm('Bạn có chắc chắn muốn duyệt bài đăng này?');">Duyệt</a>
+                                            <a href="@Url.Action("Reject", "Manage", new { id = post.PostID })" 
+                                               class="btn btn-sm btn-warning" 
+                                               onclick="return confirm('Bạn có chắc chắn muốn từ chối bài đăng này?');">Từ chối</a>
+                                        }
+                                        else
+                                        {
+                                            <a href="@Url.Action("DeletePost", "Manage", new { id = post.PostID })" 
+                                               class="btn btn-sm btn-danger" 
+                                               onclick="return confirm('Bạn có chắc chắn muốn xóa bài đăng này?');">Xóa</a>
+                                        }
+                                    }
+                                    else if (role == "ChuTro" && post.OwnerID == userId)
+                                    {
+                                        <a href="@Url.Action("EditPost", "Post", new { id = post.PostID })" 
+                                           class="btn btn-sm btn-primary">Chỉnh sửa</a>
+                                        <a href="@Url.Action("DeletePost", "Manage", new { id = post.PostID })" 
+                                           class="btn btn-sm btn-danger" 
+                                           onclick="return confirm('Bạn có chắc chắn muốn xóa bài đăng này?');">Xóa</a>
+                                    }
+                                </td>
+                            </tr>
+                            index++;
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8" class="text-center">Không có bài đăng nào.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

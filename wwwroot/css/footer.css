@@ -1,0 +1,45 @@
+/* footer.css */
+.footer {
+    background-color: #fdf5ed;
+    padding: 40px 0;
+    border-top: 1px solid #e5e5e5;
+}
+.footer h5 {
+    margin-bottom: 15px;
+    color: #333;
+}
+.footer a {
+    color: #0077cc;
+    text-decoration: none;
+}
+.footer a:hover {
+    color: #005fa3;
+}
+.footer ul {
+    list-style: none;
+    padding: 0;
+}
+.footer li {
+    margin-bottom: 8px;
+}
+.social-icons a {
+    font-size: 20px;
+    margin-right: 10px;
+    color: #0077cc;
+}
+.social-icons a:hover {
+    color: #005fa3;
+}
+.footer {
+    background-color: #fdf5ed;
+    padding: 40px 0 10px 0; /* trên 40px, dưới chỉ 10px */
+    border-top: 1px solid #e5e5e5;
+}
+
+.footer .text-center {
+    margin-top: 0;
+    padding-bottom: 0;
+}
+
+
+

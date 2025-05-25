@@ -1,0 +1,102 @@
+@model PaginatedList<PostViewModel>
+
+@{
+    ViewData["Title"] = "Bài đăng đã lưu";
+}
+
+<h2 class="mb-4">Bài đăng đã lưu</h2>
+
+@if (Model != null && Model.Any())
+{
+    <div class="row">
+        @foreach (var post in Model)
+        {
+            <div class="col-md-6 mb-4">
+                <div class="card shadow-sm">
+                    <div class="row g-0" style="height: 300px;">
+                        <div class="col-8 h-100">
+                            <img src="@(post.ImageUrls.ElementAtOrDefault(0) ?? "/images/no-image.jpg")" 
+                                class="img-fluid h-100 w-100" 
+                                style="object-fit: cover;" 
+                                alt="Ảnh lớn">
+                        </div>
+                        <div class="col-4 d-flex flex-column h-100">
+                            <img src="@(post.ImageUrls.ElementAtOrDefault(1) ?? "/images/no-image.jpg")" 
+                                class="img-fluid" 
+                                style="height: 50%; object-fit: cover;">
+                            <img src="@(post.ImageUrls.ElementAtOrDefault(2) ?? "/images/no-image.jpg")" 
+                                class="img-fluid" 
+                                style="height: 50%; object-fit: cover;">
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">@post.Title</h5>
+                        <span class="fw-bolder fs-6">@string.Format("{0:N0}", post.Price) đồng/tháng</span>
+                        <span class="mx-2">-</span>
+                        <span>@string.Format("{0:N0}", post.Area) m²</span>
+                        <span class="mx-2">-</span>
+                        <span>@post.Address</span>
+                        <p class="mb-3 text-secondary fw-light clamp-2-lines">@post.Description</p>
+                        <a href="@Url.Action("Detail", "Post", new { id = post.PostID })" class="btn btn-primary btn-sm">Xem chi tiết</a>
+                        <button class="btn btn-outline-danger favorite-btn"
+                                data-post-id="@post.PostID">
+                            <i class="bi @(post.IsFavorited ? "bi-heart-fill" : "bi-heart")"></i>
+                            @(post.IsFavorited ? "Bỏ lưu" : "Lưu")
+                        </button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+            @if (Model.HasPreviousPage)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="?page=@(Model.PageIndex - 1)">Trang trước</a>
+                </li>
+            }
+            else
+            {
+                <li class="page-item disabled">
+                    <span class="page-link">Trang trước</span>
+                </li>
+            }
+
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                if (i == Model.PageIndex)
+                {
+                    <li class="page-item active"><span class="page-link">@i</span></li>
+                }
+                else
+                {
+                    <li class="page-item"><a class="page-link" href="?page=@i">@i</a></li>
+                }
+            }
+
+            @if (Model.HasNextPage)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="?page=@(Model.PageIndex + 1)">Trang sau</a>
+                </li>
+            }
+            else
+            {
+                <li class="page-item disabled">
+                    <span class="page-link">Trang sau</span>
+                </li>
+            }
+        </ul>
+    </nav>
+}
+else
+{
+    <div class="text-center">
+        <p>Bạn chưa lưu bài đăng nào.</p>
+    </div>
+}
+
+<script src="/lib/jquery/dist/jquery.min.js"></script> 
+<script src="/js/favorite.js"></script>
